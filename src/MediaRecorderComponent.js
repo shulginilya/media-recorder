@@ -9,7 +9,8 @@ const MediaRecorderComponent = () => {
      */
     const [isRecording, setRecordingStatus] = useState(false);
     const [mediaRecorder, setMediaRecorder] = useState({});
-    const [downloadUrl, setDownloadUrl] = useState('');
+    const [downloadUrl, setDownloadUrl] = useState('#');
+    const [fileName, setFileName] = useState('');
     /**
      * Lifetime cycles (via hook)
      * Empty array we are passing
@@ -22,7 +23,7 @@ const MediaRecorderComponent = () => {
      * Set up references for the DOM elements
      */
     const liveVideoElementRef = useRef(null);
-    const downloadLinkRef = useRef(null);
+    // const downloadLinkRef = useRef(null);
     /**
      * Build configuration object for media stream
      * Support: only Chrome / Firefox
@@ -144,11 +145,9 @@ const MediaRecorderComponent = () => {
                 }
             }
             /*
-                Assing attributes to the DOM link
+                Set state variables
             */
-            downloadLinkRef.current.href = downloadUrl;
-            downloadLinkRef.current.setAttribute('download', fileName);
-            downloadLinkRef.current.setAttribute('name', fileName);
+            setFileName(fileName);
             setDownloadUrl(downloadUrl);
 		};
         /*
@@ -188,7 +187,7 @@ const MediaRecorderComponent = () => {
                     <button className={isRecording ? 'media_recorder__controls__button disabled' : 'media_recorder__controls__button'} disabled={isRecording} onClick={beginRecord}>Start recording</button>
                     <button className={isRecording ? 'media_recorder__controls__button' : 'media_recorder__controls__button disabled'} disabled={!isRecording} onClick={stopRecord}>Stop recording</button>
                 </div>
-                <a ref={downloadLinkRef} href="#" className={downloadUrl === '' ? 'media_recorder__controls__button disabled' : 'media_recorder__controls__button'}>Download</a>
+                <a href={downloadUrl} download={fileName} name={fileName} className={downloadUrl === '#' ? 'media_recorder__controls__button disabled' : 'media_recorder__controls__button'}>Download</a>
             </div>
         </div>
     );
