@@ -9,6 +9,7 @@ const MediaRecorderComponent = () => {
      */
     const [isRecording, setRecordingStatus] = useState(false);
     const [mediaRecorder, setMediaRecorder] = useState({});
+    const [downloadUrl, setDownloadUrl] = useState('');
     /**
      * Lifetime cycles (via hook)
      * Empty array we are passing
@@ -34,13 +35,13 @@ const MediaRecorderComponent = () => {
         const browser = getBrowser();
         if (browser.name === 'Chrome') {
             options = {
-                audio: false,
+                audio: true,
                 video: {
                     mandatory: {
-                        minWidth: 320,
-                        maxWidth: 320,
-                        minHeight: 240,
-                        maxHeight: 240
+                        minWidth: 640,
+                        maxWidth: 640,
+                        minHeight: 480,
+                        maxHeight: 480
                     },
                     optional: []
                 }
@@ -50,14 +51,14 @@ const MediaRecorderComponent = () => {
                 audio: true,
                 video: {
                     width: {
-                        min: 320,
-                        ideal: 320,
-                        max: 1280
+                        min: 640,
+                        ideal: 640,
+                        max: 640
                     },
                     height: {
-                        min: 240,
-                        ideal: 240,
-                        max: 720
+                        min: 480,
+                        ideal: 480,
+                        max: 480
                     }
                 }
             };
@@ -121,11 +122,16 @@ const MediaRecorderComponent = () => {
             Stop recording even handler
         */
         mediaRecorderObject.onstop = () => {
+            /*
+                Build download link
+            */
 			const recording = new Blob(chunks, {
                 type: mediaRecorder.mimeType
             });
             const downloadUrl = URL.createObjectURL(recording);
-            downloadLinkRef.current.href = downloadUrl;
+            /*
+                Build the filename
+            */
             let fileName = '';
             const rand =  Math.floor((Math.random() * 10000000));
 			switch(containerType) {
@@ -136,9 +142,14 @@ const MediaRecorderComponent = () => {
 				default: {
                     fileName  = `video_${rand}.webm`;
                 }
-			}
+            }
+            /*
+                Assing attributes to the DOM link
+            */
+            downloadLinkRef.current.href = downloadUrl;
             downloadLinkRef.current.setAttribute('download', fileName);
-			downloadLinkRef.current.setAttribute('name', fileName);
+            downloadLinkRef.current.setAttribute('name', fileName);
+            setDownloadUrl(downloadUrl);
 		};
         /*
             Update state
@@ -151,27 +162,33 @@ const MediaRecorderComponent = () => {
      * Start recording
      */
     const beginRecord = () => {
-        mediaRecorder.start(1000);
-        setRecordingStatus(true);
+        if (!isRecording) {
+            mediaRecorder.start(1000);
+            setRecordingStatus(true);
+        }
     }
     /**
      * Controls
      * Stop recording
      */
     const stopRecord = () => {
-        mediaRecorder.stop();
-        setRecordingStatus(false);
+        if (isRecording) {
+            mediaRecorder.stop();
+            setRecordingStatus(false);
+        }
     }
 
     return (
         <div className="media_recorder">
             <div className="media_recorder__video-element">
-                <video ref={liveVideoElementRef} controls autoPlay playsInline></video>
+                <video ref={liveVideoElementRef} controls></video>
             </div>
             <div className="media_recorder__controls">
-                <button className="media_recorder__controls__button" disabled={isRecording} onClick={beginRecord}>Start recording</button>
-                <button className="media_recorder__controls__button" disabled={!isRecording} onClick={stopRecord}>Stop recording</button>
-                <a ref={downloadLinkRef} href="#" className="media_recorder__controls__button">Download</a>
+                <div className="media_recorder__controls__left">
+                    <button className={isRecording ? 'media_recorder__controls__button disabled' : 'media_recorder__controls__button'} disabled={isRecording} onClick={beginRecord}>Start recording</button>
+                    <button className={isRecording ? 'media_recorder__controls__button' : 'media_recorder__controls__button disabled'} disabled={!isRecording} onClick={stopRecord}>Stop recording</button>
+                </div>
+                <a ref={downloadLinkRef} href="#" className={downloadUrl === '' ? 'media_recorder__controls__button disabled' : 'media_recorder__controls__button'}>Download</a>
             </div>
         </div>
     );

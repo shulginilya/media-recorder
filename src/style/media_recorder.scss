@@ -1,13 +1,44 @@
 @import 'normalize';
 
 .media_recorder {
+    width: 640px;
     .media_recorder__video-element {
-        width: 500px;
-        height: 500px;
-        border: solid 1px grey;
+        width: 640px;
+        height: 480px;
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.1);
     }
     .media_recorder__controls {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 15px;
+        &__left {
+            display: flex;
+            > * {
+                margin-right: 10px;
+                &:last-child {
+                    margin-right: 0px;
+                }
+            }
+        } 
         &__button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 30px;
+            padding: 0 10px;
+            font-size: 14px;
+            font-weight: 500;
+            color: #fff !important;
+            border-radius: 6px;
+            background-color: #00A999;
+            border: solid 1px #00A999;
+            outline: none;
+            text-decoration: none;
+            cursor: pointer;
+            &.disabled {
+                opacity: .4;
+                cursor: not-allowed;
+            }
         }
     }
 }
