@@ -1,0 +1,13 @@
+@import 'normalize';
+
+.media_recorder {
+    .media_recorder__video-element {
+        width: 500px;
+        height: 500px;
+        border: solid 1px grey;
+    }
+    .media_recorder__controls {
+        &__button {
+        }
+    }
+}
